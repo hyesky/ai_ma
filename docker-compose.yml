@@ -1,0 +1,24 @@
+# ai_ma · Docker Compose (macOS 本地部署)
+# 架构：单容器同时运行 Django (web/admin) + ai_ma_zlm (ZLMediaKit 定制版)
+# 说明：ai_ma_zlm 是 Linux x86 ELF 二进制，macOS 无法直接执行，必须进容器
+# 好处：ZLM hook 回调 http://127.0.0.1:10001/inner/... 直接命中同容器内的 Django，无需跨容器网络
+services:
+  ai_ma:
+    build: .
+    container_name: ai_ma
+    restart: unless-stopped
+    ports:
+      - "8001:10001"         # web 登录页 (Django 内部 10001, 对外映射 8001)
+      - "10001:10001"        # Django admin hook (ZLM -> Django, 内部)
+      - "10002:10002"        # ZLM API
+      - "10554:10554"      # RTSP
+      - "10935:10935"      # RTMP
+      - "8080:8080"        # 可选：拉流端口
+    volumes:
+      - ./ai_ma.sqlite3:/app/ai_ma.sqlite3
+      - ./config.json:/app/config.json
+      - ./www:/app/www
+      - ./record:/app/record
+      - ./ffmpeg:/app/ffmpeg
+    environment:
+      TZ: Asia/Shanghai

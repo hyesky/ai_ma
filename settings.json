@@ -1,0 +1,110 @@
+{
+  "lang_default": "zh",
+  "languages": {
+    "zh": {
+      "code": "zh",
+      "name": "简体中文",
+      "filename": "language-zh.json",
+      "oem": {
+        "name": "工业级视频监控AI大模型",
+        "welcome": "自主定义视频分析业务算法",
+        "logo_url": "/static/images/logo.png?v=20260914a",
+        "bottom_name": "ai_ma",
+        "is_show_author": true,
+        "author": "hyexon",
+        "author_link": "",
+        "check_version_download_url": ""
+      }
+    },
+    "zh-hk": {
+      "code": "zh-hk",
+      "name": "繁體中文",
+      "filename": "language-zh-hk.json",
+      "oem": {
+        "name": "工业级视频监控AI大模型",
+        "welcome": "自主定义视频分析业务算法",
+        "logo_url": "/static/images/logo.png",
+        "bottom_name": "ai_ma",
+        "is_show_author": true,
+        "author": "hyexon",
+        "author_link": "",
+        "check_version_download_url": ""
+      }
+    },
+    "en": {
+      "code": "en",
+      "name": "English",
+      "filename": "language-en.json",
+      "oem": {
+        "name": "工业级视频监控AI大模型",
+        "welcome": "自主定义视频分析业务算法",
+        "logo_url": "/static/images/logo.png",
+        "bottom_name": "ai_ma",
+        "is_show_author": true,
+        "author": "hyexon",
+        "author_link": "",
+        "check_version_download_url": ""
+      }
+    },
+    "es": {
+      "code": "es",
+      "name": "Español",
+      "filename": "language-es.json",
+      "oem": {
+        "name": "工业级视频监控AI大模型",
+        "welcome": "自主定义视频分析业务算法",
+        "logo_url": "/static/images/logo.png",
+        "bottom_name": "ai_ma",
+        "is_show_author": true,
+        "author": "hyexon",
+        "author_link": "",
+        "check_version_download_url": ""
+      }
+    },
+    "ru": {
+      "code": "ru",
+      "name": "Русский",
+      "filename": "language-ru.json",
+      "oem": {
+        "name": "工业级视频监控AI大模型",
+        "welcome": "自主定义视频分析业务算法",
+        "logo_url": "/static/images/logo.png",
+        "bottom_name": "ai_ma",
+        "is_show_author": true,
+        "author": "hyexon",
+        "author_link": "",
+        "check_version_download_url": ""
+      }
+    },
+    "ko": {
+      "code": "ko",
+      "name": "한국어",
+      "filename": "language-ko.json",
+      "oem": {
+        "name": "工业级视频监控AI大模型",
+        "welcome": "自主定义视频分析业务算法",
+        "logo_url": "/static/images/logo.png",
+        "bottom_name": "ai_ma",
+        "is_show_author": true,
+        "author": "hyexon",
+        "author_link": "",
+        "check_version_download_url": ""
+      }
+    },
+    "vi": {
+      "code": "vi",
+      "name": "Tiếng Việt",
+      "filename": "language-vi.json",
+      "oem": {
+        "name": "工业级视频监控AI大模型",
+        "welcome": "自主定义视频分析业务算法",
+        "logo_url": "/static/images/logo.png",
+        "bottom_name": "ai_ma",
+        "is_show_author": true,
+        "author": "hyexon",
+        "author_link": "",
+        "check_version_download_url": ""
+      }
+    }
+  }
+}
