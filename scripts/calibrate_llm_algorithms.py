@@ -60,12 +60,16 @@ def draw_person(d, x, g, spec):
     # 站立姿态
     hy = g - 150  # 头顶
     circle((x, hy + 20), 20, SKIN)
-    d.line([(x, hy + 38), (x, hy + 92)], fill=CLOTH, width=12)  # 躯干
+    lean = 4 if s == "run" else 0
+    d.line([(x, hy + 38), (x + lean, hy + 92)], fill=CLOTH, width=12)  # 躯干
     # 袖子/手臂
     top = hy + 40
     if s == "run":
-        d.line([(x - 8, top), (x - 34, top + 30)], fill=CLOTH, width=7)
-        d.line([(x + 8, top), (x + 34, top + 18)], fill=CLOTH, width=7)
+        d.line([(x - 8, top), (x - 40, top + 8)], fill=CLOTH, width=7)   # 前摆臂
+        d.line([(x + 8, top), (x + 36, top + 36)], fill=CLOTH, width=7)  # 后摆臂
+        for i in range(3):  # 身后动感线
+            d.line([(x - 56 - i * 12, top - 8 + i * 10), (x - 42 - i * 12, top + i * 10)],
+                   fill=(130, 130, 130), width=3)
     elif spec.get("phone"):
         d.line([(x + 10, top), (x + 32, top + 6)], fill=CLOTH, width=7)  # 手举到耳
     elif spec.get("smash"):
@@ -77,8 +81,8 @@ def draw_person(d, x, g, spec):
     # 腿
     hip = hy + 90
     if s == "run":
-        d.line([(x - 4, hip), (x - 30, g)], fill=CLOTH, width=9)
-        d.line([(x + 4, hip), (x + 34, g)], fill=CLOTH, width=9)
+        d.line([(x - 4, hip), (x - 40, g - 2)], fill=CLOTH, width=9)  # 大跨步前腿
+        d.line([(x + 4, hip), (x + 44, g)], fill=CLOTH, width=9)      # 蹬直后腿
     elif s == "sit":  # 坐在椅子上（睡岗用）
         d.line([(x - 4, hip), (x - 12, g - 20)], fill=CLOTH, width=9)
         d.line([(x + 4, hip), (x + 16, g - 20)], fill=CLOTH, width=9)
@@ -100,8 +104,10 @@ def draw_person(d, x, g, spec):
         d.rounded_rectangle([hc[0] - 18, hc[1] + 6, hc[0] + 18, hc[1] + 20], 8, fill=(240, 240, 240))
     if spec.get("seatbelt"):  # 安全带斜带
         d.line([(x - 10, hy + 42), (x + 8, hy + 88)], fill=(200, 40, 40), width=6)
-    if spec.get("vest"):  # 反光衣
-        d.rectangle([x - 10, hy + 40, x + 10, hy + 76], fill=(250, 210, 40))
+    if spec.get("vest"):  # 反光背心（叠在深色上衣外，黄绿+银白反光条）
+        d.rectangle([x - 11, hy + 38, x + 11, hy + 74], fill=(210, 230, 60))
+        d.rectangle([x - 9, hy + 52, x + 9, hy + 60], fill=(245, 245, 245))
+        d.rectangle([x - 9, hy + 62, x + 9, hy + 70], fill=(245, 245, 245))
     if spec.get("uniform"):  # 厨师服（白上衣）
         d.line([(x, hy + 38), (x, hy + 92)], fill=(245, 244, 242), width=14)
     if spec.get("gloves"):  # 手套（白手套）
@@ -198,19 +204,26 @@ def parking(bay, plate):
     return im
 
 
+def _draw_car(d, x0, y, w, color):
+    d.rounded_rectangle([x0, y, x0 + w, y + 44], 10, fill=color, outline=(60, 50, 40), width=2)  # 车身
+    d.polygon([(x0 + int(w * 0.2), y), (x0 + int(w * 0.38), y - 26), (x0 + int(w * 0.66), y - 26),
+               (x0 + int(w * 0.84), y)], fill=color)  # 车顶
+    d.polygon([(x0 + int(w * 0.38), y - 22), (x0 + int(w * 0.54), y - 24), (x0 + int(w * 0.52), y),
+               (x0 + int(w * 0.3), y)], fill=(70, 80, 100))  # 风挡
+    d.rounded_rectangle([x0 + int(w * 0.06), y + 32, x0 + int(w * 0.28), y + 50], 5, fill=(30, 30, 30))
+    d.rounded_rectangle([x0 + int(w * 0.64), y + 32, x0 + int(w * 0.86), y + 50], 5, fill=(30, 30, 30))
+
+
 def vehicle(leaving=False):
     im, d = new_frame()
-    if leaving:  # 驶向画面右缘
-        d.rounded_rectangle([300, 200, 505, 250], 12, fill=(150, 90, 60))
-        d.rounded_rectangle([330, 272, 390, 260], 5, fill=(40, 40, 40))
-        d.rounded_rectangle([430, 272, 490, 260], 5, fill=(40, 40, 40))
-        d.line([(340, 200), (310, 170)], fill=(100, 100, 100), width=4)  # 动感线
-        d.line([(470, 225), (505, 225)], fill=(100, 100, 100), width=4)
-    else:  # 停在区域中
-        d.rectangle([120, 220, 400, 260], outline=(240, 240, 240), width=5)
-        d.rounded_rectangle([170, 170, 350, 260], 12, fill=(120, 140, 160))
-        d.rounded_rectangle([190, 250, 260, 258], 5, fill=(40, 40, 40))
-        d.rounded_rectangle([280, 250, 340, 258], 5, fill=(40, 40, 40))
+    if leaving:  # 驶向画面右缘：车头朝右贴边 + 动感线
+        _draw_car(d, 296, 196, 205, (160, 95, 60))
+        d.line([(330, 180), (296, 148)], fill=(110, 110, 110), width=4)
+        d.line([(468, 218), (505, 218)], fill=(110, 110, 110), width=4)
+        d.line([(470, 232), (505, 232)], fill=(110, 110, 110), width=4)
+    else:  # 停在区域中（广场车位）
+        d.rectangle([110, 218, 400, 260], outline=(240, 240, 240), width=5)
+        _draw_car(d, 175, 170, 200, (120, 140, 165))
     return im
 
 
@@ -235,14 +248,16 @@ def ebike(elevator=False):
 def fire(smoke_only=False, flame_only=False):
     im, d = new_frame()
     if not smoke_only:
-        d.polygon([(220, 270), (252, 150), (286, 270)], fill=(240, 120, 20))
-        d.polygon([(252, 175), (272, 100), (292, 175)], fill=(250, 200, 40))
-        d.ellipse([228, 180, 270, 230], fill=(250, 160, 40))
-        d.polygon([(240, 270), (262, 205), (284, 270)], fill=(250, 200, 40))
+        d.ellipse([170, 190, 330, 296], fill=(235, 170, 60))  # 地面火光
+        for cx, cy, r in [(205, 210, 26), (252, 190, 30), (300, 212, 26)]:  # 火苗
+            d.polygon([(cx - r, cy + r), (cx, cy - r), (cx + r, cy + r)], fill=(235, 130, 25))
+        d.polygon([(240, 215), (252, 140), (264, 215)], fill=(250, 225, 110))  # 内焰
+        d.polygon([(266, 212), (278, 155), (290, 212)], fill=(250, 180, 60))
     if not flame_only:
-        d.ellipse([310, 120, 360, 170], fill=(170, 170, 170))
-        d.ellipse([360, 90, 405, 145], fill=(150, 150, 150))
-        d.ellipse([395, 130, 440, 180], fill=(170, 170, 170))
+        for cx, cy, r, c in [(330, 130, 24, (160, 160, 160)), (362, 96, 20, (140, 140, 140)),
+                             (395, 132, 24, (165, 165, 165))]:  # 烟团
+            d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=c)
+        d.polygon([(350, 100), (330, 40), (376, 80)], fill=(170, 170, 170))  # 烟柱
     return im
 
 
@@ -332,7 +347,7 @@ SCENES = {
     "灭火器检测": (extinguisher, room),
     "锥形桶检测": (cone, room),
     "危险货物标签识别": (hazard, room),
-    "离岗检测": (lambda: desk("empty"), lambda: desk("manned")),
+    "离岗检测": (room, lambda: desk("manned")),
     "打架检测": (lambda: two_people(True), lambda: person()),
     "安全帽检测": (lambda: person(helmet=True), lambda: person()),
     "安全帽扣检测": (lambda: person(helmet=True, seatbelt=True), lambda: person(helmet=True)),
@@ -387,7 +402,7 @@ def trim(s, n=46):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--db", default=DB)
-    ap.add_argument("--name", help="按名称过滤（子串）")
+    ap.add_argument("--name", help="按名称过滤（逗号分隔多选，子串匹配）")
     ap.add_argument("--image", help="用真实帧替代合成正帧（现场校准）")
     ap.add_argument("--only-positive", action="store_true")
     ap.add_argument("--max", type=int, default=0)
@@ -423,7 +438,8 @@ def main():
         "WHERE llm_id IS NOT NULL AND llm_prompt != '' AND state=1 ORDER BY id"
     ).fetchall()
     if a.name:
-        rows = [r for r in rows if a.name in r[0]]
+        names = [n.strip() for n in a.name.split(",") if n.strip()]
+        rows = [r for r in rows if any(nm in r[0] for nm in names)]
     print(f"共 {len(rows)} 条 LLM 算法待校准  [{api_url} / {model}]")
     if a.max:
         rows = rows[: a.max]
